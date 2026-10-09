@@ -1,0 +1,64 @@
+/* ============================================================
+   aula.css — Estilos personalizados para el CRUD de Aula
+   Sistema Académico JAEGASA
+   ============================================================ */
+
+.badge-aula {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+    color: #0369a1;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(3, 105, 161, 0.15);
+    box-shadow: 0 2px 5px rgba(3, 105, 161, 0.05);
+    font-size: 0.9rem;
+    transition: all 0.25s ease;
+}
+
+.badge-aula:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(3, 105, 161, 0.1);
+    background: linear-gradient(135deg, #bae6fd, #7dd3fc);
+}
+
+
+.text-light-gray {
+    color: #cbd5e1;
+}
+
+/* Animaciones y mejoras en la tabla */
+#tablaAulas thead th {
+    background: var(--color-primario, #1D8AB5);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    vertical-align: middle;
+}
+
+#tablaAulas tbody td {
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+#tablaAulas tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+#tablaAulas tbody tr:hover {
+    background-color: rgba(29, 138, 181, 0.03) !important;
+}
+
+.invalid-feedback {
+    display: none;
+    font-size: 0.85rem;
+    color: #dc3545;
+    margin-top: 4px;
+}
+
+.form-control.is-invalid + .invalid-feedback {
+    display: block;
+}

@@ -1,0 +1,534 @@
+/* ============================================================
+   horario.css — Estilos personalizados para el CRUD de Horarios
+   Sistema Académico JAEGASA
+   ============================================================ */
+
+/* Estilo para los distintivos de día de la semana */
+.badge-cat {
+    display: inline-block;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(146, 64, 14, 0.15);
+    font-size: 0.85rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Destacar la hora de inicio y fin */
+.table td:nth-child(3),
+.table td:nth-child(4) {
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+/* Estilo para errores de validación de hora */
+.time-error-message {
+    font-size: 0.85rem;
+    color: #dc3545;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.form-control.is-invalid-time {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* ============================================================
+   Diseño de Pestañas (Tabs) Premium
+   ============================================================ */
+.horario-nav-tabs {
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 8px;
+}
+
+.horario-nav-tabs .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #4b5563;
+    font-weight: 600;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease-in-out;
+    background: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.horario-nav-tabs .nav-link:hover {
+    color: #1e40af;
+    border-bottom-color: #93c5fd;
+}
+
+.horario-nav-tabs .nav-link.active {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
+    background: none;
+}
+
+/* ============================================================
+   Diseño de la Grilla Semanal (Timetable Grid)
+   ============================================================ */
+.timetable-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    margin-top: 10px;
+}
+
+.timetable-header-info {
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.timetable-header-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.timetable-header-subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 4px 0 0 0;
+    text-align: center;
+}
+
+/* Tabla principal de horarios */
+.timetable-table {
+    width: 100%;
+    border-collapse: collapse !important;
+    border: 2px solid #111111 !important;
+    table-layout: fixed !important;
+    margin-top: 5px;
+}
+
+.timetable-table th {
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-align: center;
+    padding: 10px;
+    border: 1.5px solid #111111 !important;
+    text-transform: capitalize;
+    color: #ffffff;
+}
+
+.timetable-table th:first-child {
+    background-color: #ffffff !important;
+    color: #111111 !important;
+}
+
+/* Colores de cabecera por día */
+.timetable-table th.th-color-lunes     { background-color: #b5c71a !important; color: #111111 !important; }
+.timetable-table th.th-color-martes    { background-color: #8b5cf6 !important; color: #ffffff !important; }
+.timetable-table th.th-color-miercoles { background-color: #eab308 !important; color: #111111 !important; }
+.timetable-table th.th-color-jueves    { background-color: #06b6d4 !important; color: #ffffff !important; }
+.timetable-table th.th-color-viernes   { background-color: #f43f5e !important; color: #ffffff !important; }
+
+.timetable-table tr {
+    border-bottom: 1.5px solid #111111 !important;
+}
+
+.timetable-table td {
+    border: 1.5px solid #111111 !important;
+    padding: 6px !important;
+    vertical-align: middle;
+    height: 85px;
+    position: relative;
+    background: #ffffff !important;
+}
+
+/* Columna de Periodos */
+.timetable-period-col {
+    background-color: #ffffff !important;
+    text-align: center;
+    font-weight: 600;
+    width: 105px;
+    padding: 6px !important;
+}
+
+.timetable-period-num {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #111111;
+    display: block;
+    margin-bottom: 1px;
+}
+
+.timetable-period-time {
+    font-size: 0.8rem;
+    color: #4b5563;
+    font-weight: 500;
+    font-family: 'Courier New', Courier, monospace;
+    display: block;
+}
+
+/* Bloque del Recreo */
+.timetable-row-recreo {
+    height: 44px !important;
+}
+
+.timetable-row-recreo td {
+    height: 44px !important;
+    background-color: #ffffff !important;
+    text-align: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #1f2937;
+    letter-spacing: 1px;
+    border: 1.5px solid #111111 !important;
+}
+
+/* Tarjeta flotante dentro de cada celda */
+.timetable-cell-active {
+    position: relative;
+    padding: 6px 8px 6px 20px !important;
+    height: 100%;
+    min-height: 72px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 8px !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.timetable-cell-active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    filter: brightness(0.97);
+}
+
+/* Paletas de colores de Fondo para cada Día */
+.color-lunes     { background-color: #fefce8 !important; border: 1.5px solid rgba(181, 199, 26, 0.6) !important; }
+.color-martes    { background-color: #faf5ff !important; border: 1.5px solid rgba(139, 92, 246, 0.6) !important; }
+.color-miercoles { background-color: #fffbeb !important; border: 1.5px solid rgba(234, 180, 8, 0.6) !important; }
+.color-jueves    { background-color: #ecfeff !important; border: 1.5px solid rgba(6, 182, 212, 0.6) !important; }
+.color-viernes   { background-color: #fff1f2 !important; border: 1.5px solid rgba(244, 63, 94, 0.6) !important; }
+.color-default   { background-color: #eff6ff !important; border: 1.5px solid rgba(59, 130, 246, 0.6) !important; }
+
+/* Barra de color vertical izquierda */
+.timetable-cell-active::before {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 6px;
+    border-radius: 4px;
+}
+
+.color-lunes::before     { background-color: #b5c71a !important; }
+.color-martes::before    { background-color: #8b5cf6 !important; }
+.color-miercoles::before { background-color: #eab308 !important; }
+.color-jueves::before    { background-color: #06b6d4 !important; }
+.color-viernes::before   { background-color: #f43f5e !important; }
+.color-default::before   { background-color: #3b82f6 !important; }
+
+/* Contenido de la celda activa */
+.cell-subject {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #111111;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    line-height: 1.15;
+}
+
+.cell-info {
+    font-size: 0.76rem;
+    color: #4b5563;
+    font-weight: 600;
+    line-height: 1.15;
+}
+
+.cell-info i {
+    margin-right: 3px;
+    color: #9ca3af;
+}
+
+/* Celda vacía */
+.timetable-cell-empty {
+    color: #9ca3af;
+    font-size: 0.85rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Leyenda explicativa en fila horizontal con cuadritos de color por día */
+.timetable-legend {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 24px !important;
+    margin-top: 15px !important;
+    padding-top: 12px !important;
+    border-top: 1px dashed #cbd5e1 !important;
+}
+
+.legend-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+
+.legend-color {
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+/* Colores para las celdas de cabecera de los días (th) */
+.timetable-table th.th-color-lunes { background-color: #b5c71a !important; color: #111111 !important; }
+.timetable-table th.th-color-martes { background-color: #8b5cf6 !important; color: #ffffff !important; }
+.timetable-table th.th-color-miercoles { background-color: #eab308 !important; color: #111111 !important; }
+.timetable-table th.th-color-jueves { background-color: #06b6d4 !important; color: #ffffff !important; }
+.timetable-table th.th-color-viernes { background-color: #f43f5e !important; color: #ffffff !important; }
+
+/* Contenedor responsivo con scroll para la grilla semanal */
+.timetable-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .timetable-container {
+        padding: 14px;
+    }
+    .horario-nav-tabs {
+        overflow-x: auto;
+        padding-bottom: 4px;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    .horario-nav-tabs .nav-link {
+        white-space: nowrap;
+        padding: 8px 14px;
+        font-size: 0.85rem;
+    }
+    .timetable-table th {
+        font-size: 0.95rem;
+        padding: 8px;
+    }
+    .timetable-period-col {
+        width: 85px;
+    }
+    .timetable-period-num {
+        font-size: 1rem;
+    }
+    .timetable-table td {
+        min-width: 110px;
+        height: 75px;
+    }
+}
+
+/* Estilos optimizados para la impresión del Horario en Hoja Tamaño Carta Horizontal (Letter Landscape) */
+@page {
+    size: letter landscape;
+    size: landscape;
+    margin: 4mm;
+}
+
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    .sidebar, .topbar, .dash-header, .card-panel, .modal, .btn, .no-print, button, .btn-toggle {
+        display: none !important;
+    }
+
+    html, body {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        overflow: hidden !important;
+    }
+
+    .app-layout, .app-main, .app-content {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .timetable-container, .grid-docente-container {
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        border: none !important;
+        background: #ffffff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        width: 100% !important;
+        max-height: 98vh !important;
+    }
+
+    .timetable-header-info {
+        margin-bottom: 6px !important;
+        padding-bottom: 4px !important;
+    }
+
+    .timetable-header-title {
+        font-size: 11pt !important;
+    }
+
+    .timetable-header-subtitle {
+        font-size: 9pt !important;
+    }
+
+    .timetable-legend {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 18px !important;
+        margin-top: 6px !important;
+        padding-top: 4px !important;
+        border-top: 1px solid #000000 !important;
+    }
+
+    .legend-item {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        font-size: 8pt !important;
+        font-weight: bold !important;
+        color: #000000 !important;
+    }
+
+    .legend-color {
+        display: inline-block !important;
+        width: 13px !important;
+        height: 13px !important;
+        border-radius: 3px !important;
+        border: 1px solid #000000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .table-responsive, .timetable-responsive-wrapper {
+        overflow: visible !important;
+    }
+
+    /* FORZAR LÍNEAS DIVISORIAS HORIZONTALES Y VERTICALES EN CADA HORA Y DÍA AL IMPRIMIR */
+    table.timetable-table,
+    table.timetable-table > thead,
+    table.timetable-table > tbody,
+    table.timetable-table > tbody > tr,
+    table.timetable-table > thead > tr,
+    table.timetable-table th,
+    table.timetable-table td,
+    table.timetable-table > :not(caption) > * > *,
+    .timetable-period-col,
+    .timetable-row-recreo td {
+        border: 1.5px solid #000000 !important;
+        border-top: 1.5px solid #000000 !important;
+        border-bottom: 1.5px solid #000000 !important;
+        border-left: 1.5px solid #000000 !important;
+        border-right: 1.5px solid #000000 !important;
+        border-collapse: collapse !important;
+        box-shadow: none !important;
+        --bs-table-border-color: #000000 !important;
+        --bs-table-accent-bg: transparent !important;
+    }
+
+    table.timetable-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        margin-top: 2px !important;
+    }
+
+    .timetable-table th {
+        padding: 2px 3px !important;
+        font-size: 8.5pt !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .timetable-table td {
+        padding: 1px 2px !important;
+        height: auto !important;
+        font-size: 8pt !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .timetable-row-recreo, .timetable-row-recreo td {
+        height: 18px !important;
+        padding: 1px !important;
+        font-size: 7.5pt !important;
+    }
+
+    /* Mantener las tarjetas flotantes y los cuadritos con el color del día */
+    .timetable-cell-active {
+        padding: 2px 3px 2px 14px !important;
+        border-radius: 4px !important;
+        min-height: 32px !important;
+        height: 100% !important;
+    }
+
+    .timetable-cell-active::before {
+        left: 3px !important;
+        top: 2px !important;
+        bottom: 2px !important;
+        width: 4px !important;
+        border-radius: 2px !important;
+    }
+
+    .cell-subject {
+        font-size: 7.5pt !important;
+        font-weight: 800 !important;
+        line-height: 1.05 !important;
+    }
+
+    .cell-info {
+        font-size: 6.5pt !important;
+        line-height: 1.05 !important;
+    }
+
+    .timetable-period-num {
+        font-size: 8pt !important;
+    }
+
+    .timetable-period-time {
+        font-size: 6.5pt !important;
+    }
+}

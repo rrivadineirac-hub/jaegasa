@@ -1,0 +1,382 @@
+/* ============================================================
+   login.css  —  Pantalla de acceso (tema oscuro / glassmorphism)
+   Sistema Académico JAEGASA
+   Paleta institucional U.E. Jaime Escalante:
+     Azul (Lema/Borde) ... #1D8AB5
+     Verde (Llama) ....... #51C743
+     Naranja (Llama) ..... #F7931D
+   ============================================================ */
+
+:root {
+    --azul:        #1D8AB5;
+    --azul-cla:    #2ba3d4;
+    --verde:       #51C743;
+    --naranja:     #F7931D;
+
+    --card-fondo:  #0f2b3a;   /* Azul muy oscuro del card */
+    --card-fondo2: #123141;
+    --texto:       #eaf6fb;
+    --texto-tenue: rgba(234, 246, 251, 0.55);
+    --linea:       rgba(234, 246, 251, 0.22);
+
+    --error:       #ff6b6b;
+    --exito:       #51C743;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 4vw, 24px);
+    background: linear-gradient(135deg, #2ba79f 0%, #1d8ab5 42%, #0e4055 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Manchas de luz animadas en el fondo */
+body::before,
+body::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+}
+body::before {
+    width: 380px; height: 380px;
+    background: var(--verde);
+    top: -120px; left: -100px;
+    animation: flotar1 12s ease-in-out infinite;
+}
+body::after {
+    width: 420px; height: 420px;
+    background: var(--naranja);
+    bottom: -140px; right: -120px;
+    opacity: 0.35;
+    animation: flotar2 14s ease-in-out infinite;
+}
+
+@keyframes flotar1 {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(60px, 40px); }
+}
+@keyframes flotar2 {
+    0%, 100% { transform: translate(0, 0); }
+    50%      { transform: translate(-50px, -30px); }
+}
+
+/* ===================== Card ===================== */
+.login-wrapper {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ángulo animado para el borde de gradiente */
+@property --giro {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.login-card {
+    position: relative;
+    border-radius: 26px;
+    padding: clamp(28px, 7vw, 44px) clamp(24px, 6vw, 40px) clamp(20px, 5vw, 30px);
+    background:
+        linear-gradient(160deg, var(--card-fondo), var(--card-fondo2)) padding-box,
+        conic-gradient(from var(--giro),
+            var(--verde), var(--naranja), var(--azul), var(--verde)) border-box;
+    border: 2px solid transparent;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+    animation: aparecer 0.6s ease, girarBorde 8s linear infinite;
+    text-align: center;
+}
+
+@keyframes girarBorde { to { --giro: 360deg; } }
+
+/* Respaldo si el navegador no soporta @property: borde fijo con degradado */
+@supports not (background: conic-gradient(from 0deg, red, blue)) {
+    .login-card {
+        background: linear-gradient(160deg, var(--card-fondo), var(--card-fondo2));
+        border: 2px solid var(--azul);
+    }
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ===================== Marca ===================== */
+.login-avatar {
+    width: clamp(72px, 18vw, 88px);
+    height: clamp(72px, 18vw, 88px);
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2rem, 6vw, 2.6rem);
+    color: var(--texto);
+    background: radial-gradient(circle at 50% 40%, #17394b, #0d2431);
+    border: 2px solid var(--verde);
+    box-shadow: 0 0 0 4px rgba(81, 199, 67, 0.12),
+                0 0 22px rgba(81, 199, 67, 0.35);
+    animation: latir 3.5s ease-in-out infinite;
+}
+
+@keyframes latir {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(81,199,67,0.10), 0 0 18px rgba(81,199,67,0.30); }
+    50%      { box-shadow: 0 0 0 6px rgba(81,199,67,0.18), 0 0 30px rgba(81,199,67,0.55); }
+}
+
+.login-title {
+    color: #fff;
+    font-size: clamp(1.7rem, 6vw, 2.1rem);
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.login-sub {
+    color: var(--azul-cla);
+    font-size: clamp(0.78rem, 3vw, 0.9rem);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+.login-motto {
+    color: var(--texto-tenue);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    margin-top: 3px;
+    margin-bottom: 26px;
+}
+
+/* ===================== Formulario ===================== */
+.login-form { text-align: left; }
+
+.login-alerta {
+    display: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    margin-bottom: 18px;
+    text-align: center;
+}
+.login-alerta.error {
+    display: block;
+    background: rgba(255, 107, 107, 0.14);
+    color: var(--error);
+    border: 1px solid rgba(255, 107, 107, 0.4);
+}
+.login-alerta.exito {
+    display: block;
+    background: rgba(81, 199, 67, 0.14);
+    color: var(--exito);
+    border: 1px solid rgba(81, 199, 67, 0.4);
+}
+
+/* Inputs con línea inferior */
+.input-group {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--texto-tenue);
+    font-size: 1.05rem;
+    transition: color 0.3s;
+}
+
+.input-group input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--linea);
+    padding: 11px 34px 11px 32px;
+    color: var(--texto);
+    font-size: 0.98rem;
+    transition: border-color 0.3s;
+}
+
+.input-group input::placeholder { color: var(--texto-tenue); }
+.input-group input:focus { outline: none; }
+
+/* Autofill: mantener el look oscuro */
+.input-group input:-webkit-autofill {
+    -webkit-text-fill-color: var(--texto);
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Línea de gradiente que crece al enfocar */
+.input-group::after {
+    content: "";
+    position: absolute;
+    left: 0; bottom: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--verde), var(--naranja));
+    transition: width 0.35s ease;
+}
+.input-group:focus-within::after { width: 100%; }
+.input-group:focus-within .input-icon { color: var(--verde); }
+
+.input-toggle {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--texto-tenue);
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: color 0.25s;
+}
+.input-toggle:hover { color: var(--naranja); }
+
+/* Opciones: recordarme / olvidó contraseña */
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 4px 0 24px;
+    font-size: 0.82rem;
+}
+
+.check-recordar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--texto-tenue);
+    cursor: pointer;
+    user-select: none;
+}
+.check-recordar input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--linea);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+}
+.check-recordar input:checked {
+    background: var(--verde);
+    border-color: var(--verde);
+}
+.check-recordar input:checked::after {
+    content: "\2713";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0f2b3a;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.link-olvido {
+    color: var(--azul-cla);
+    text-decoration: none;
+    transition: color 0.25s;
+}
+.link-olvido:hover { color: var(--naranja); }
+
+/* ===================== Botón ===================== */
+.btn-login {
+    position: relative;
+    width: 100%;
+    padding: 13px;
+    border: 2px solid transparent;
+    border-radius: 32px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background:
+        linear-gradient(#0a1e29, #0a1e29) padding-box,
+        linear-gradient(90deg, var(--verde), var(--naranja), var(--azul)) border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.3s;
+}
+
+/* Brillo que recorre el botón */
+.btn-login::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -120%;
+    width: 60%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    transition: left 0.6s ease;
+}
+.btn-login:hover::before { left: 130%; }
+
+.btn-login:hover {
+    box-shadow: 0 0 22px rgba(81, 199, 67, 0.35),
+                0 0 32px rgba(247, 147, 29, 0.25);
+}
+.btn-login:active { transform: scale(0.98); }
+.btn-login:disabled { opacity: 0.75; cursor: not-allowed; }
+
+.btn-spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: girar 0.6s linear infinite;
+}
+.btn-login.cargando .btn-spinner { display: inline-block; }
+.btn-login.cargando .btn-text    { opacity: 0.85; }
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* ===================== Pie ===================== */
+.login-footer {
+    text-align: center;
+    margin-top: 22px;
+    color: var(--texto-tenue);
+    font-size: 0.72rem;
+    letter-spacing: 0.3px;
+}
+
+/* ===================== Responsivo ===================== */
+@media (max-width: 360px) {
+    .login-card { border-radius: 20px; }
+    .login-options { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .input-group input { font-size: 0.92rem; }
+}
+
+/* Respeta usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .login-card, .login-avatar, body::before, body::after { animation: none; }
+}

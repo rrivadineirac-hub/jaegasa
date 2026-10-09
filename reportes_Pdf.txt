@@ -1,0 +1,408 @@
+-- ================================================================================
+-- REPORTES IMPRESOS Y PDF DE LOS BOTONES "IMPRIMIR" (SISTEMA ACADÉMICO JAEGASA)
+-- ================================================================================
+-- Descripción: Este documento contiene exclusivamente las consultas SQL correspondientes 
+-- a los reportes y documentos que se generan al presionar los botones "IMPRIMIR" 
+-- en las diferentes vistas CRUD de la aplicación.
+-- 
+-- Archivo: reportes_Pdf.txt
+-- Compatibilidad: MySQL Workbench 8.0+ / MariaDB
+-- Base de Datos: `jaegasa_db_fluter`
+-- ================================================================================
+
+USE jaegasa_db_fluter;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 1: FORMULARIO RUDE / COMPROBANTE OFICIAL DE INSCRIPCIÓN INDIVIDUAL
+-- ================================================================================
+-- VISTA CRUD: Inscripciones (`View/vinscripcion.php`)
+-- ACCIÓN: Botón "Imprimir Formulario RUDE / Comprobante" en la fila del estudiante
+-- FUNCIÓN JS: `imprimirComprobanteInscripcion(element)`
+-- DESCRIPCIÓN: Genera la ficha impresa en PDF/Papel para el archivo del alumno 
+-- y firma del tutor legal, con datos filiatorios, residencia, curso y tutor.
+-- PARÁMETROS: @idInscripcion (ID de la inscripción a imprimir). Si no se define, muestra todos.
+-- ================================================================================
+
+SET @idInscripcion = 0; -- Colocar ID de inscripción específica (ej. 1) o 0 para ver todas
+
+SELECT 
+    i.idInscripcion,
+    g.anio AS Gestion_Escolar,
+    e.rude AS RUDE,
+    e.ci AS CI_Estudiante,
+    e.apPaterno AS Apellido_Paterno,
+    e.apMaterno AS Apellido_Materno,
+    e.nombre AS Nombres_Estudiante,
+    CONCAT(e.apPaterno, ' ', e.apMaterno, ' ', e.nombre) AS Estudiante_Nombre_Completo,
+    CASE e.genero 
+        WHEN 'M' THEN 'MASCULINO' 
+        WHEN 'F' THEN 'FEMENINO' 
+        ELSE e.genero 
+    END AS Genero,
+    DATE_FORMAT(e.fechaNacimiento, '%d/%m/%Y') AS Fecha_Nacimiento,
+    TIMESTAMPDIFF(YEAR, e.fechaNacimiento, CURDATE()) AS Edad_Anos,
+    COALESCE(NULLIF(TRIM(e.nacionalidad), ''), 'BOLIVIANA') AS Nacionalidad,
+    COALESCE(NULLIF(TRIM(e.departamento), ''), 'SANTA CRUZ') AS Departamento_Nacimiento,
+    COALESCE(NULLIF(TRIM(e.provincia), ''), 'ANDRÉS IBÁÑEZ') AS Provincia_Nacimiento,
+    
+    -- Datos de la Dirección / Domicilio
+    COALESCE(dir.barrio, 'SIN BARRIO') AS Barrio_Domicilio,
+    COALESCE(dir.localidad, 'SANTA CRUZ') AS Localidad,
+    COALESCE(dir.calle, 'S/N') AS Calle_Avenida,
+    COALESCE(dir.numero, 'S/N') AS Numero_Vivienda,
+    
+    -- Datos del Curso Asignado
+    c.nombre AS Grado_Curso,
+    p.nombre AS Paralelo,
+    n.nombre AS Nivel_Educativo,
+    t.nombre AS Turno,
+    CONCAT(c.nombre, ' ', p.nombre, ' DE ', n.nombre) AS Curso_Completo_Impresion,
+    
+    -- Datos del Tutor Legal Asignado
+    COALESCE(tut.ci, 'S/C') AS CI_Tutor,
+    COALESCE(CONCAT(tut.apPaterno, ' ', tut.apMaterno, ' ', tut.nombre), 'SIN TUTOR ASIGNADO') AS Nombre_Tutor_Legal,
+    COALESCE(tut.telefono, 'SIN TELÉFONO') AS Telefono_Tutor,
+    COALESCE(tut.parentesco, 'TUTOR') AS Parentesco_Tutor,
+    
+    -- Usuario Administrativo que Inscribió
+    COALESCE(CONCAT(adm.apPaterno, ' ', adm.nombre), 'SISTEMA') AS Funcionario_Registrador,
+    DATE_FORMAT(i.fechaRegistro, '%d/%m/%Y %H:%i') AS Fecha_Hora_Inscripcion
+FROM Inscripcion i
+INNER JOIN Estudiante e       ON e.idEstudiante     = i.idEstudiante
+LEFT JOIN Direccion dir       ON dir.idDireccion    = e.idDireccion
+INNER JOIN Curso c            ON c.idCurso          = i.idCurso
+INNER JOIN Gestion g          ON g.idGestion        = c.idGestion
+INNER JOIN Nivel n            ON n.idNivel          = c.idNivel
+INNER JOIN Turno t            ON t.idTurno          = c.idTurno
+INNER JOIN Paralelo p         ON p.idParalelo       = c.idParalelo
+LEFT JOIN Estudiante_Tutor et ON et.idEstudiante    = e.idEstudiante
+LEFT JOIN Tutor tut           ON tut.idTutor        = et.idTutor AND tut.estado = 1
+LEFT JOIN Administrativo adm  ON adm.idAdministrativo = i.idAdministrativo
+WHERE i.estado = 1
+  AND (@idInscripcion = 0 OR @idInscripcion IS NULL OR i.idInscripcion = @idInscripcion)
+ORDER BY i.idInscripcion DESC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 2: NÓMINA OFICIAL DE ESTUDIANTES POR CURSO / GENERAL
+-- ================================================================================
+-- VISTA CRUD: Estudiantes (`View/vestudiante.php`)
+-- ACCIÓN: Botón "Imprimir" (al filtrar por curso o realizar búsqueda)
+-- FUNCIÓN JS: `imprimirListadoEstudiantes()`
+-- DESCRIPCIÓN: Genera la lista escolar oficial impresa para control de aula y firmas.
+-- PARÁMETROS: @idCursoImprimir (0 para ver TODOS los estudiantes, o ID específico de curso).
+-- ================================================================================
+
+SET @idCursoImprimir = 0; -- Coloque 0 para mostrar TODOS los estudiantes del colegio, o el ID del curso
+
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY e.apPaterno ASC, e.apMaterno ASC, e.nombre ASC) AS Nro,
+    e.rude AS RUDE,
+    e.ci AS CI,
+    e.apPaterno AS Apellido_Paterno,
+    e.apMaterno AS Apellido_Materno,
+    e.nombre AS Nombres,
+    CONCAT(e.apPaterno, ' ', e.apMaterno, ' ', e.nombre) AS Estudiante,
+    CASE e.genero WHEN 'M' THEN 'M' WHEN 'F' THEN 'F' ELSE e.genero END AS Sexo,
+    COALESCE(CONCAT(c.nombre, ' ', p.nombre, ' - ', n.nombre), 'Sin Curso / No Inscrito') AS Curso_Paralelo,
+    COALESCE(g.anio, 'S/G') AS Gestion,
+    COALESCE(CONCAT(tut.apPaterno, ' ', tut.nombre), 'Sin Tutor') AS Tutor_Responsable,
+    COALESCE(tut.telefono, '-') AS Telefono_Tutor
+FROM Estudiante e
+LEFT JOIN Inscripcion i       ON i.idEstudiante  = e.idEstudiante AND i.estado = 1
+LEFT JOIN Curso c            ON c.idCurso       = i.idCurso AND c.estado = 1
+LEFT JOIN Gestion g          ON g.idGestion     = c.idGestion
+LEFT JOIN Nivel n            ON n.idNivel       = c.idNivel
+LEFT JOIN Paralelo p         ON p.idParalelo    = c.idParalelo
+LEFT JOIN Estudiante_Tutor et ON et.idEstudiante = e.idEstudiante
+LEFT JOIN Tutor tut           ON tut.idTutor     = et.idTutor AND tut.estado = 1
+WHERE e.estado = 1
+  AND (@idCursoImprimir IS NULL OR @idCursoImprimir = 0 OR c.idCurso = @idCursoImprimir)
+ORDER BY e.apPaterno ASC, e.apMaterno ASC, e.nombre ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 3: NÓMINA IMPRESA DEL PLANTEL DE DOCENTES / PROFESORES
+-- ================================================================================
+-- VISTA CRUD: Docentes (`View/vdocente.php`)
+-- ACCIÓN: Botón "Imprimir"
+-- FUNCIÓN JS: `imprimirListadoDocentes()`
+-- DESCRIPCIÓN: Genera el padrón oficial impreso del personal docente registrado.
+-- PARÁMETROS: @buscarDocente ('' para listar TODOS los profesores, o texto a buscar).
+-- ================================================================================
+
+SET @buscarDocente = ''; -- Dejar en '' para ver TODOS los profesores del colegio
+
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY d.apPaterno ASC, d.apMaterno ASC, d.nombre ASC) AS Nro,
+    d.idDocente,
+    d.ci AS CI_Docente,
+    d.apPaterno AS Apellido_Paterno,
+    d.apMaterno AS Apellido_Materno,
+    d.nombre AS Nombres,
+    CONCAT(d.apPaterno, ' ', d.apMaterno, ' ', d.nombre) AS Nombre_Completo_Docente,
+    CASE d.genero WHEN 'M' THEN 'MASCULINO' WHEN 'F' THEN 'FEMENINO' ELSE COALESCE(d.genero, '-') END AS Genero,
+    COALESCE(c.nombre, 'Sin Categoría') AS Categoria,
+    COALESCE(d.numeroItem, 'S/I') AS Numero_Item,
+    COALESCE(d.rda, 'S/RDA') AS RDA,
+    COALESCE(d.telefono, '-') AS Telefono_Contacto,
+    COALESCE(d.correo, '-') AS Correo_Electronico,
+    COALESCE(d.nacionalidad, 'Boliviana') AS Nacionalidad
+FROM Docente d
+LEFT JOIN Categoria c ON c.idCategoria = d.idCategoria
+LEFT JOIN Usuario u   ON u.idUsuario   = d.idUsuario
+WHERE d.estado = 1
+  AND (@buscarDocente = '' OR @buscarDocente IS NULL OR 
+       d.nombre LIKE CONCAT('%', @buscarDocente, '%') OR 
+       d.apPaterno LIKE CONCAT('%', @buscarDocente, '%') OR 
+       d.apMaterno LIKE CONCAT('%', @buscarDocente, '%') OR 
+       d.ci LIKE CONCAT('%', @buscarDocente, '%'))
+ORDER BY d.apPaterno ASC, d.apMaterno ASC, d.nombre ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 4: PARTE DIARIO IMPRESO DE ASISTENCIA DIARIA DEL CURSO
+-- ================================================================================
+-- VISTA CRUD: Asistencia (`View/vasistencia.php`)
+-- ACCIÓN: Botón "Imprimir Asistencia del Curso"
+-- FUNCIÓN JS: `imprimirListadoAsistencia()`
+-- DESCRIPCIÓN: Genera el parte diario oficial de asistencia del curso para la fecha 
+-- seleccionada, con estados (PRESENTE, RETRASO, FALTA, LICENCIA), hora de llegada u observaciones.
+-- PARÁMETROS: 
+--   @idCursoAsistencia (0 para ver TODOS los cursos, o ID de curso específico)
+--   @fechaAsistencia (Fecha del parte, ej. CURDATE() o '2026-10-08')
+-- ================================================================================
+
+SET @idCursoAsistencia = 0;        -- ID del curso (0 para ver todos los cursos)
+SET @fechaAsistencia   = CURDATE(); -- Fecha del parte (ej. '2026-10-08')
+
+SELECT 
+    ROW_NUMBER() OVER (
+        PARTITION BY c.idCurso 
+        ORDER BY e.apPaterno ASC, e.apMaterno ASC, e.nombre ASC
+    ) AS Nro,
+    g.anio AS Gestion_Escolar,
+    CONCAT(c.nombre, ' "', p.nombre, '" - ', n.nombre, ' (', t.nombre, ')') AS Curso_Completo,
+    DATE_FORMAT(@fechaAsistencia, '%d/%m/%Y') AS Fecha_Parte,
+    e.rude AS RUDE,
+    e.ci AS CI_Estudiante,
+    e.apPaterno AS Apellido_Paterno,
+    e.apMaterno AS Apellido_Materno,
+    e.nombre AS Nombres,
+    CONCAT(e.apPaterno, ' ', e.apMaterno, ' ', e.nombre) AS Estudiante,
+    CASE COALESCE(ag.estado, 'SIN MARCAR')
+        WHEN 'A' THEN 'PRESENTE'
+        WHEN 'R' THEN 'RETRASO'
+        WHEN 'F' THEN 'FALTA'
+        WHEN 'L' THEN 'LICENCIA'
+        ELSE 'SIN MARCAR'
+    END AS Estado_Asistencia,
+    COALESCE(TIME_FORMAT(ag.horaLlegada, '%H:%i'), '-') AS Hora_Ingreso,
+    COALESCE(ag.observacion, '-') AS Observacion_Detalle
+FROM Inscripcion i
+INNER JOIN Estudiante e ON e.idEstudiante = i.idEstudiante
+INNER JOIN Curso c      ON c.idCurso      = i.idCurso
+INNER JOIN Gestion g    ON g.idGestion    = c.idGestion
+INNER JOIN Nivel n      ON n.idNivel      = c.idNivel
+INNER JOIN Paralelo p   ON p.idParalelo   = c.idParalelo
+INNER JOIN Turno t      ON t.idTurno      = c.idTurno
+LEFT JOIN asistencia_general ag ON ag.idInscripcion = i.idInscripcion AND ag.fecha = @fechaAsistencia
+WHERE i.estado = 1 
+  AND e.estado = 1
+  AND (@idCursoAsistencia IS NULL OR @idCursoAsistencia = 0 OR c.idCurso = @idCursoAsistencia)
+ORDER BY c.nombre ASC, p.nombre ASC, e.apPaterno ASC, e.apMaterno ASC, e.nombre ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 5: CARNETS / CREDENCIALES ESCOLARES CON CÓDIGO QR
+-- ================================================================================
+-- VISTA CRUD: Credenciales / QR (`View/vqr.php`)
+-- ACCIÓN: Botón "Imprimir QRs del Curso" o "Imprimir Selección"
+-- FUNCIÓN JS: `imprimirCredencialesQR()`
+-- DESCRIPCIÓN: Extrae la matriz de carnets en formato fotocheck de 9 por hoja Oficio.
+-- ================================================================================
+
+SET @idCursoQR = 0; -- 0 para ver todas las credenciales o ID del curso
+
+SELECT 
+    e.idEstudiante,
+    e.rude AS RUDE,
+    e.ci AS CI,
+    CONCAT(e.apPaterno, ' ', e.apMaterno, ' ', e.nombre) AS Nombre_Completo_Estudiante,
+    COALESCE(CONCAT(c.nombre, ' ', p.nombre), 'Sin Curso') AS Curso_Y_Paralelo,
+    COALESCE(n.nombre, '-') AS Nivel_Educativo,
+    COALESCE(t.nombre, '-') AS Turno,
+    COALESCE(g.anio, '-') AS Gestion,
+    e.qr AS Codigo_QR_Texto
+FROM Estudiante e
+LEFT JOIN Inscripcion i ON i.idEstudiante = e.idEstudiante AND i.estado = 1
+LEFT JOIN Curso c      ON c.idCurso      = i.idCurso AND c.estado = 1
+LEFT JOIN Gestion g    ON g.idGestion    = c.idGestion
+LEFT JOIN Nivel n      ON n.idNivel      = c.idNivel
+LEFT JOIN Paralelo p   ON p.idParalelo   = c.idParalelo
+LEFT JOIN Turno t      ON t.idTurno      = c.idTurno
+WHERE e.estado = 1
+  AND (@idCursoQR IS NULL OR @idCursoQR = 0 OR c.idCurso = @idCursoQR)
+ORDER BY e.apPaterno ASC, e.apMaterno ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 6: HORARIO ESCOLAR GENERAL POR CURSO
+-- ================================================================================
+-- VISTA CRUD: Horarios (`View/vhorario.php`)
+-- ACCIÓN: Botón "Imprimir Horario"
+-- FUNCIÓN JS: `window.print()`
+-- DESCRIPCIÓN: Genera la planilla horizontal del horario escolar por curso.
+-- ================================================================================
+
+SET @idCursoHorario = 0; -- 0 para ver todos o ID de curso específico
+
+SELECT 
+    CONCAT(c.nombre, ' ', p.nombre, ' DE ', n.nombre) AS Titulo_Curso,
+    g.anio AS Gestion,
+    hc.diaSemana AS Dia_Semana,
+    per.numeroPeriodo AS Periodo,
+    TIME_FORMAT(per.horaInicio, '%H:%i') AS Hora_Inicio,
+    TIME_FORMAT(per.horaFin, '%H:%i') AS Hora_Fin,
+    CONCAT(TIME_FORMAT(per.horaInicio, '%H:%i'), ' - ', TIME_FORMAT(per.horaFin, '%H:%i')) AS Rango_Horario,
+    m.nombre AS Materia,
+    m.sigla AS Sigla,
+    CONCAT(d.apPaterno, ' ', d.nombre) AS Profesor,
+    COALESCE(a.nombre, 'S/A') AS Aula_Ambiente
+FROM horario_curso hc
+INNER JOIN curso c     ON c.idCurso     = hc.idCurso
+INNER JOIN gestion g   ON g.idGestion   = c.idGestion
+INNER JOIN paralelo p  ON p.idParalelo  = c.idParalelo
+INNER JOIN nivel n     ON n.idNivel     = c.idNivel
+INNER JOIN materia m   ON m.idMateria   = hc.idMateria
+INNER JOIN docente d   ON d.idDocente   = hc.idDocente
+INNER JOIN periodo per ON per.idPeriodo = hc.idPeriodo
+LEFT JOIN aula a       ON a.idAula      = hc.idAula
+WHERE (@idCursoHorario IS NULL OR @idCursoHorario = 0 OR hc.idCurso = @idCursoHorario)
+ORDER BY c.nombre ASC, FIELD(hc.diaSemana, 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'), per.numeroPeriodo ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 7: DIRECTORIO IMPRESO DE TUTORES Y CONTACTOS
+-- ================================================================================
+-- VISTA CRUD: Tutores (`View/vtutor.php`)
+-- ACCIÓN: Botón "Imprimir Listado"
+-- FUNCIÓN JS: `imprimirListadoTutores()`
+-- DESCRIPCIÓN: Imprime la lista de contactos de padres de familia y tutores.
+-- ================================================================================
+
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY tut.apPaterno ASC, tut.apMaterno ASC) AS Nro,
+    tut.ci AS CI_Tutor,
+    CONCAT(tut.apPaterno, ' ', tut.apMaterno, ' ', tut.nombre) AS Nombre_Tutor,
+    tut.telefono AS Telefono,
+    tut.parentesco AS Parentesco,
+    e.rude AS RUDE_Hijo,
+    CONCAT(e.apPaterno, ' ', e.apMaterno, ' ', e.nombre) AS Estudiante_Asociado,
+    COALESCE(CONCAT(c.nombre, ' ', p.nombre), 'Sin Curso') AS Curso
+FROM Tutor tut
+INNER JOIN Estudiante_Tutor et ON et.idTutor = tut.idTutor
+INNER JOIN Estudiante e        ON e.idEstudiante = et.idEstudiante
+LEFT JOIN Inscripcion i        ON i.idEstudiante = e.idEstudiante AND i.estado = 1
+LEFT JOIN Curso c              ON c.idCurso = i.idCurso
+LEFT JOIN Paralelo p           ON p.idParalelo = c.idParalelo
+WHERE tut.estado = 1 AND e.estado = 1
+ORDER BY tut.apPaterno ASC, tut.apMaterno ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 8: PLANILLA DE ASIGNACIÓN DOCENTE Y CARGA HORARIA
+-- ================================================================================
+-- VISTA CRUD: Asignación Docente (`View/vasignacion_docente.php`)
+-- ACCIÓN: Botón "Imprimir Carga Horaria"
+-- DESCRIPCIÓN: Reporte impreso de materias y paralelos asignados a cada profesor.
+-- ================================================================================
+
+SELECT 
+    g.anio AS Gestion,
+    CONCAT(d.apPaterno, ' ', d.apMaterno, ' ', d.nombre) AS Nombre_Profesor,
+    d.ci AS CI,
+    d.telefono AS Telefono,
+    m.nombre AS Materia_Asignada,
+    m.sigla AS Sigla,
+    CONCAT(c.nombre, ' ', p.nombre) AS Curso,
+    n.nombre AS Nivel
+FROM asignacion_docente ad
+INNER JOIN gestion g   ON ad.idGestion = g.idGestion
+INNER JOIN docente d   ON ad.idDocente = d.idDocente
+INNER JOIN materia m   ON ad.idMateria = m.idMateria
+INNER JOIN curso c     ON ad.idCurso   = c.idCurso
+INNER JOIN nivel n     ON c.idNivel    = n.idNivel
+INNER JOIN paralelo p  ON c.idParalelo = p.idParalelo
+WHERE ad.estado = 1 AND d.estado = 1
+ORDER BY Nombre_Profesor ASC, m.nombre ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 9: REGISTRO IMPRESO DE ASISTENCIA DOCENTE
+-- ================================================================================
+-- VISTA CRUD: Asistencia Docente (`View/vasistencia_docente.php`)
+-- ACCIÓN: Botón "Imprimir Asistencia Docente"
+-- DESCRIPCIÓN: Imprime la lista de marcado de ingreso de profesores.
+-- ================================================================================
+
+SET @fechaDocente = CURDATE();
+
+SELECT 
+    ad.fecha AS Fecha,
+    d.ci AS CI,
+    CONCAT(d.apPaterno, ' ', d.apMaterno, ' ', d.nombre) AS Profesor,
+    ad.estado AS Estado,
+    COALESCE(TIME_FORMAT(ad.horaLlegada, '%H:%i'), '-') AS Hora_Ingreso,
+    COALESCE(ad.observacion, '-') AS Observacion
+FROM asistencia_docente ad
+INNER JOIN docente d ON d.idDocente = ad.idDocente
+WHERE ad.fecha = @fechaDocente AND d.estado = 1
+ORDER BY d.apPaterno ASC, d.apMaterno ASC;
+
+
+-- ================================================================================
+-- BOTÓN IMPRIMIR 10: FICHA INDIVIDUAL Y NÓMINA DEL PERSONAL ADMINISTRATIVO
+-- ================================================================================
+-- VISTA CRUD: Administrativos (`View/vadministrativo.php`)
+-- ACCIÓN: Botón "Imprimir Ficha" (Modal Ver Detalle) y Botón "Imprimir" (Nómina General)
+-- FUNCIÓN JS: `imprimirFichaAdministrativo(id)` y `imprimirListadoAdministrativos()`
+-- DESCRIPCIÓN: Reporte impreso y ficha técnica oficial del personal administrativo.
+-- PARÁMETROS: @idAdministrativo (0 para ver TODOS, o el ID del administrativo específico).
+-- ================================================================================
+
+SET @idAdministrativo = 0; -- Colocar ID de administrativo (ej. 1) o 0 para ver toda la plantilla
+
+SELECT 
+    ROW_NUMBER() OVER (ORDER BY a.apPaterno ASC, a.apMaterno ASC, a.nombre ASC) AS Nro,
+    a.idAdministrativo,
+    a.ci AS CI,
+    CONCAT(a.apPaterno, ' ', a.apMaterno, ' ', a.nombre) AS Nombre_Completo,
+    a.apPaterno AS Apellido_Paterno,
+    a.apMaterno AS Apellido_Materno,
+    a.nombre AS Nombres,
+    CASE a.genero 
+        WHEN 'M' THEN 'MASCULINO' 
+        WHEN 'F' THEN 'FEMENINO' 
+        ELSE COALESCE(a.genero, '—') 
+    END AS Genero,
+    COALESCE(DATE_FORMAT(a.fechaNacimiento, '%d/%m/%Y'), '—') AS Fecha_Nacimiento,
+    COALESCE(a.nacionalidad, 'BOLIVIANA') AS Nacionalidad,
+    COALESCE(a.correo, '—') AS Correo_Electronico,
+    COALESCE(a.telefono, '—') AS Telefono_Contacto,
+    COALESCE(a.direccion, '—') AS Direccion,
+    COALESCE(a.cargo, '—') AS Cargo,
+    COALESCE(a.categoria, 'Sin Categoría') AS Categoria,
+    COALESCE(a.nitem, '—') AS Item,
+    COALESCE(a.rda, '—') AS RDA,
+    COALESCE(a.usuario, '—') AS Usuario_Sistema,
+    COALESCE(DATE_FORMAT(a.fechaRegistro, '%d/%m/%Y %H:%i'), '—') AS Fecha_Registro
+FROM Administrativo a
+WHERE a.estado = 1
+  AND (@idAdministrativo = 0 OR @idAdministrativo IS NULL OR a.idAdministrativo = @idAdministrativo)
+ORDER BY a.apPaterno ASC, a.apMaterno ASC, a.nombre ASC;
+
+-- ================================================================================
+-- FIN DE REPORTES IMPRESOS Y PDF
+-- ================================================================================

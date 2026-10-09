@@ -1,0 +1,166 @@
+/**
+ * asignacion_docente.css — Estilos personalizados para el CRUD de Asignación Docente
+ * Sistema Académico JAEGASA
+ */
+
+/* Badges para el listado de Asignación Docente */
+
+.badge-gestion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    color: #c2410c;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(194, 65, 12, 0.15);
+    font-size: 0.85rem;
+    box-shadow: 0 1px 3px rgba(194, 65, 12, 0.05);
+}
+
+.badge-curso {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+    color: #0369a1;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(3, 105, 161, 0.15);
+    font-size: 0.85rem;
+    box-shadow: 0 1px 3px rgba(3, 105, 161, 0.05);
+    transition: all 0.2s ease;
+}
+
+.badge-curso:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(3, 105, 161, 0.12);
+    background: linear-gradient(135deg, #bae6fd, #7dd3fc);
+}
+
+.badge-materia {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #f1f5f9;
+    color: #334155;
+    font-weight: 550;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.88rem;
+}
+
+.badge-materia .sigla {
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--color-primario, #1d8ab5);
+    background-color: #e2e8f0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+
+.docente-celda {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilos de la tabla de asignaciones */
+#tablaAsignaciones thead th {
+    background: var(--color-primario, #1D8AB5);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: none;
+    vertical-align: middle;
+}
+
+#tablaAsignaciones tbody td {
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+#tablaAsignaciones tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+#tablaAsignaciones tbody tr:hover {
+    background-color: rgba(29, 138, 181, 0.03) !important;
+}
+
+/* Estilos de validación */
+.invalid-feedback {
+    display: none;
+    font-size: 0.82rem;
+    color: #dc3545;
+    margin-top: 4px;
+}
+
+.form-select.is-invalid + .invalid-feedback {
+    display: block;
+}
+
+.form-select.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+/* Mejoras en el diseño de cursos/materias en grid */
+.border-bottom-dashed {
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.fila-curso-opcion {
+    transition: background-color 0.2s ease, border-left 0.2s ease;
+    border-left: 3px solid transparent;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.fila-curso-opcion:hover {
+    background-color: rgba(29, 138, 181, 0.02);
+}
+
+.fila-curso-opcion.active-row {
+    background-color: rgba(29, 138, 181, 0.06);
+    border-left-color: var(--color-primario, #1d8ab5);
+}
+
+.container-listado-cursos {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.container-listado-cursos::-webkit-scrollbar {
+    width: 6px;
+}
+
+.container-listado-cursos::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+}
+
+.container-listado-cursos::-webkit-scrollbar-track {
+    background-color: #f1f5f9;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.feedback-grid-asignacion {
+    display: none;
+    font-size: 0.82rem;
+    color: #dc3545;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
+.disabled-wrapper {
+    opacity: 0.55;
+    pointer-events: none;
+}
+

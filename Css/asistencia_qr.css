@@ -1,0 +1,253 @@
+/**
+ * asistencia_qr.css — Estilos Premium para el Lector QR de Asistencia
+ * Sistema Académico JAEGASA
+ */
+
+/* Posición y contenedor del escáner */
+.posicion-escaner {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #1e293b; /* Fondo oscuro moderno para la cámara */
+    border: 2px solid #e2e8f0;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.15);
+    margin: 10px 0;
+}
+
+#reader-container {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+}
+
+#reader {
+    width: 100% !important;
+    border: none !important;
+    background: transparent;
+}
+
+#reader video {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* Ocultar botones e interfaces por defecto de la librería para usar los nuestros */
+#reader img[alt="Info icon"] { display: none !important; }
+#reader img[alt="Camera pemission"] { display: none !important; }
+#reader button { display: none !important; }
+#reader select { display: none !important; }
+
+/* Animación del láser escáner */
+.laser-scanner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to bottom, rgba(34, 197, 94, 0), #22c55e 50%, rgba(34, 197, 94, 0));
+    box-shadow: 0 0 12px #22c55e;
+    animation: laserScan 2.5s infinite linear;
+    z-index: 10;
+    pointer-events: none;
+}
+
+@keyframes laserScan {
+    0% { top: 0%; }
+    50% { top: 98%; }
+    100% { top: 0%; }
+}
+
+/* Efecto de escaneo pausado o detenido */
+.escaner-pausado .laser-scanner {
+    animation-play-state: paused;
+    background: #ef4444;
+    box-shadow: 0 0 12px #ef4444;
+    opacity: 0.3;
+}
+
+/* Capa de destello al escanear (Éxito o Error) */
+.scanner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: opacity 0.3s ease;
+}
+
+.scanner-overlay.exito {
+    background: rgba(34, 197, 94, 0.9);
+    color: #ffffff;
+}
+
+.scanner-overlay.error {
+    background: rgba(239, 68, 68, 0.9);
+    color: #ffffff;
+}
+
+.overlay-content {
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.overlay-icon {
+    font-size: 3rem;
+}
+
+.exito .overlay-icon::before {
+    content: "\F26B"; /* Check Icon (Bootstrap Icons) */
+    font-family: "bootstrap-icons";
+}
+
+.error .overlay-icon::before {
+    content: "\F5C2"; /* X Icon (Bootstrap Icons) */
+    font-family: "bootstrap-icons";
+}
+
+@keyframes scaleIn {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Diseño de la credencial del estudiante cargado */
+.tarjeta-estudiante-contenedor {
+    min-height: 236px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 16px;
+}
+
+.credencial-estudiante {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+    text-align: left;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+    0% { transform: translateY(15px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+.credencial-foto-contenedor {
+    flex-shrink: 0;
+    position: relative;
+}
+
+.credencial-foto {
+    width: 96px;
+    height: 96px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 3px solid var(--color-primario, #1d8ab5);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.credencial-datos {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.credencial-nombre {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+}
+
+.credencial-rude {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #475569;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+.credencial-curso {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.credencial-resultado {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.badge-estado {
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-estado-A {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bcf0da;
+}
+
+.badge-estado-R {
+    background-color: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+/* Transición para la lista de historial */
+#tablaHistorialSesion tbody tr {
+    animation: fadeInRow 0.35s ease;
+}
+
+@keyframes fadeInRow {
+    0% { background-color: rgba(34, 197, 94, 0.15); opacity: 0; }
+    100% { background-color: transparent; opacity: 1; }
+}
+
+.historial-foto {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid #cbd5e1;
+}
+
+/* Animación para resaltar fila del estudiante escaneado */
+.fila-escaneada-exito {
+    animation: glowSuccess 2.5s ease-out;
+}
+
+@keyframes glowSuccess {
+    0% { background-color: rgba(34, 197, 94, 0.45) !important; }
+    30% { background-color: rgba(34, 197, 94, 0.2) !important; }
+    100% { background-color: transparent; }
+}
+

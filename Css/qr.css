@@ -1,0 +1,30 @@
+/**
+ * qr.css — Estilos específicos para la vista de códigos QR
+ * Sistema Académico JAEGASA
+ */
+
+#tablaQr .qr-preview {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 6px;
+    border-color: #cbd5e1;
+}
+
+#tablaQr .qr-preview:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-primario);
+}
+
+#modalVerQr .modal-header {
+    background-color: var(--color-primario);
+    color: #ffffff;
+    border-bottom: none;
+}
+
+#modalVerQr .modal-header .btn-close {
+    filter: invert(1) grayscale(1) brightness(2);
+}
+
+#modalVerQr .modal-body {
+    border-radius: 0 0 12px 12px;
+}

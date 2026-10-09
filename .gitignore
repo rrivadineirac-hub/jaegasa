@@ -1,0 +1,12 @@
+# Entornos de desarrollo y extensiones
+.VSCodeCounter/
+.vscode/
+.idea/
+
+# Archivos del sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Logs temporales
+*.log

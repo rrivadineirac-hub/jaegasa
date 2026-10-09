@@ -1,0 +1,245 @@
+/* ============================================================
+   asitencia.css — Estilos para el Control de Asistencia
+   Sistema Académico JAEGASA
+   ============================================================ */
+
+/* Tarjetas de estadísticas de asistencia */
+.card-stat-asist {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: left;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-stat-asist:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.card-stat-asist .stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.card-stat-asist .stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-stat-asist .stat-titulo {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-stat-asist .stat-numero {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+/* Colores semánticos para estadísticas */
+.stat-presente .stat-icon { background: #dcfce7; color: #15803d; }
+.stat-presente { border-left: 5px solid #22c55e; }
+
+.stat-retraso .stat-icon { background: #fef3c7; color: #b45309; }
+.stat-retraso { border-left: 5px solid #eab308; }
+
+.stat-falta .stat-icon { background: #fee2e2; color: #b91c1c; }
+.stat-falta { border-left: 5px solid #ef4444; }
+
+.stat-licencia .stat-icon { background: #e0f2fe; color: #0369a1; }
+.stat-licencia { border-left: 5px solid #0ea5e9; }
+
+
+/* Grupo de Opciones de Asistencia (Botones de Radio Estilizados) */
+.grupo-opciones-asist {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.opcion-asist {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.opcion-asist input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0; width: 0;
+}
+
+.opcion-asist span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid #111827;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #000000;
+    background-color: #fff;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Acciones al hacer Check con círculos de color sólido */
+.opcion-asist.op-A input:checked + span { background-color: #15803d !important; border-color: #166534 !important; color: #ffffff !important; box-shadow: 0 0 12px rgba(21, 128, 61, 0.55) !important; }
+.opcion-asist.op-R input:checked + span { background-color: #d97706 !important; border-color: #b45309 !important; color: #ffffff !important; box-shadow: 0 0 12px rgba(217, 119, 6, 0.5) !important; }
+.opcion-asist.op-F input:checked + span { background-color: #b91c1c !important; border-color: #991b1b !important; color: #ffffff !important; box-shadow: 0 0 12px rgba(185, 28, 28, 0.6) !important; }
+.opcion-asist.op-L input:checked + span { background-color: #0369a1 !important; border-color: #075985 !important; color: #ffffff !important; box-shadow: 0 0 12px rgba(3, 105, 161, 0.5) !important; }
+
+/* Efecto hover */
+.opcion-asist:hover span {
+    transform: scale(1.08);
+    border-color: #000000;
+}
+
+/* Opciones deshabilitadas (visibles y con círculos claros) */
+.opcion-asist.op-deshabilitado,
+.opcion-asist input:disabled + span {
+    cursor: not-allowed !important;
+    opacity: 0.95 !important;
+    pointer-events: none;
+}
+
+/* Opciones deshabilitadas pero SELECCIONADAS (Marcadas) -> Visibilidad sólida y color oscuro */
+.opcion-asist.op-deshabilitado input:checked + span,
+.opcion-asist input:disabled:checked + span {
+    opacity: 1 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.opcion-asist.op-deshabilitado:hover span {
+    transform: none !important;
+    border-color: #e5e7eb !important;
+}
+
+
+/* Inputs Dinámicos */
+.inputs-opcionales-asist {
+    position: relative;
+    min-height: 38px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.input-grupo-hora-llegada,
+.input-grupo-observacion {
+    display: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.25s ease;
+}
+
+.input-grupo-hora-llegada.mostrar,
+.input-grupo-observacion.mostrar {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* Celdas y Tabla */
+.table-asistencia tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-asistencia tbody tr:hover {
+    background-color: rgba(29, 138, 181, 0.02) !important;
+}
+
+.estudiante-perfil-celda {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+}
+
+.estudiante-nombre {
+    font-size: 0.93rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #0f172a;
+    letter-spacing: -0.1px;
+}
+
+.estudiante-meta {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+.btn-guardar-asist {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+/* Responsividad para control de asistencia */
+@media (max-width: 768px) {
+    .card-stat-asist {
+        padding: 12px;
+        gap: 10px;
+    }
+    .card-stat-asist .stat-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+    }
+    .card-stat-asist .stat-numero {
+        font-size: 1.25rem;
+    }
+    .opcion-asist span {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Notificación Recuadro Flotante en la esquina superior derecha */
+.toast-flash-derecho {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 1080;
+    min-width: 320px;
+    max-width: 450px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18) !important;
+    animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(120%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
